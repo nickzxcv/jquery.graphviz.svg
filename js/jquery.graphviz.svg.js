@@ -185,12 +185,18 @@
     var options = this.options
 
     // save the colors of the paths, ellipses and polygons
-    $el.find('polygon, ellipse, path').each(function () {
+    $el.find('polygon, ellipse, path, text').each(function () {
       var $this = $(this)
-      // save original colors
+      var fillcolor
+      var strokecolor
+      // save original colors or if undefined set as default according to
+      // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
+      // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
+      typeof $this.attr('fill') == 'undefined' ? fillcolor = 'black' : fillcolor = $this.attr('fill')
+      typeof $this.attr('stroke') == 'undefined' ? strokecolor = 'none' : strokecolor = $this.attr('stroke')
       $this.data('graphviz.svg.color', {
-        fill: $this.attr('fill'),
-        stroke: $this.attr('stroke')
+        fill: fillcolor,
+        stroke: strokecolor
 
       })
 
@@ -364,28 +370,24 @@
 
   GraphvizSvg.prototype.colorElement = function ($el, getColor) {
     var bg = this.$element.css('background')
-    $el.find('polygon, ellipse, path').each(function() {
+    $el.find('polygon, ellipse, path, text').each(function() {
       var $this = $(this)
       var color = $this.data('graphviz.svg.color')
-      if (color.fill && $this.prop('tagName') != 'path') {
+      if (color.fill != 'none' && $this.prop('tagName') != 'path') {
         $this.attr('fill', getColor(color.fill, bg)) // don't set  fill if it's a path
       }
-      if (color.stroke) {
+      if (color.stroke != 'none') {
         $this.attr('stroke', getColor(color.stroke, bg))
       }
     })
   }
 
   GraphvizSvg.prototype.restoreElement = function ($el) {
-    $el.find('polygon, ellipse, path').each(function() {
+    $el.find('polygon, ellipse, path, text').each(function() {
       var $this = $(this)
       var color = $this.data('graphviz.svg.color')
-      if (color.fill) {
-        $this.attr('fill', color.fill) // don't set  fill if it's a path
-      }
-      if (color.stroke) {
-        $this.attr('stroke', color.stroke)
-      }
+      $this.attr('fill', color.fill)
+      $this.attr('stroke', color.stroke)
     })
   }
 

@@ -386,12 +386,8 @@
     $el.find('polygon, ellipse, path, text').each(function() {
       var $this = $(this)
       var color = $this.data('graphviz.svg.color')
-      if (color.fill) {
-        $this.attr('fill', color.fill) // don't set  fill if it's a path
-      }
-      if (color.stroke) {
-        $this.attr('stroke', color.stroke)
-      }
+      $this.attr('fill', color.fill)
+      $this.attr('stroke', color.stroke)
     })
   }
 

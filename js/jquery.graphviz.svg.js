@@ -185,12 +185,18 @@
     var options = this.options
 
     // save the colors of the paths, ellipses and polygons
-    $el.find('polygon, ellipse, path').each(function () {
+    $el.find('polygon, ellipse, path, text').each(function () {
       var $this = $(this)
-      // save original colors
+      var fillcolor
+      var strokecolor
+      // save original colors or if undefined set as default according to
+      // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
+      // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
+      typeof $this.attr('fill') == 'undefined' ? fillcolor = 'black' : fillcolor = $this.attr('fill')
+      typeof $this.attr('stroke') == 'undefined' ? strokecolor = 'none' : strokecolor = $this.attr('stroke')
       $this.data('graphviz.svg.color', {
-        fill: $this.attr('fill'),
-        stroke: $this.attr('stroke')
+        fill: fillcolor,
+        stroke: strokecolor
 
       })
 
@@ -364,7 +370,7 @@
 
   GraphvizSvg.prototype.colorElement = function ($el, getColor) {
     var bg = this.$element.css('background')
-    $el.find('polygon, ellipse, path').each(function() {
+    $el.find('polygon, ellipse, path, text').each(function() {
       var $this = $(this)
       var color = $this.data('graphviz.svg.color')
       if (color.fill && $this.prop('tagName') != 'path') {
@@ -377,7 +383,7 @@
   }
 
   GraphvizSvg.prototype.restoreElement = function ($el) {
-    $el.find('polygon, ellipse, path').each(function() {
+    $el.find('polygon, ellipse, path, text').each(function() {
       var $this = $(this)
       var color = $this.data('graphviz.svg.color')
       if (color.fill) {
